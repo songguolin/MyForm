@@ -8,7 +8,7 @@
 
 #import "TextViewForm.h"
 #import "UIPlaceHolderTextView1.h"
-
+#import "Masonry.h"
 @interface TextViewForm ()<UITextViewDelegate>
 @property (nonatomic,strong) UIPlaceHolderTextView1 * textView;
 @property (nonatomic,assign) CGFloat newheight;
@@ -39,26 +39,36 @@
         _textView.showsHorizontalScrollIndicator = NO;
 
 
+//        CGRect cellFrame = CGRectMake(10, 20, [UIScreen mainScreen].bounds.size.width-20, 40);
+//        
+//        _textView.frame=cellFrame;
+
         [self addSubview:self.textView];
+        
+        [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.bottom.equalTo(self);
+            make.top.equalTo(self).mas_offset(20);
+        }];
         
 
         
     }
     return self;
 }
-
+-(void)layoutSubviews
+{
+    [super layoutSubviews];
+    
+  
+}
 
 -(void)setupWithModel:(FormModel*)model
 {
     
     [super setupWithModel:model];
 
-    CGRect cellFrame = CGRectMake(10, 20, [UIScreen mainScreen].bounds.size.width-20, 40);
 
-    _textView.frame=cellFrame;
-    
-    
-    
+
     if (model.content!=nil) {
         self.textView.text=model.content;
         [self updateHeight];

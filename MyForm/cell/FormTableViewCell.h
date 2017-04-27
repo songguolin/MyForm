@@ -24,8 +24,8 @@
 + (NSString *)cellIdentifierForMessageModel:(FormModel *)model;
 //第一次创建，没有cell
 - (id)initWithFormModel:(FormModel *)model reuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexpath tableView:(UITableView *)tableView;
-
-
+//设置视图
+- (void)setupSubViewsForModel:(FormModel *)model withIndexPath:(NSIndexPath *)indexpath andTableView:(UITableView *)tableView;
 
 
 //设置视图内容

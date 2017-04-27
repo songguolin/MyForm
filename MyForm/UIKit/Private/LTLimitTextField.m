@@ -1,22 +1,20 @@
 //
-//  UIPlaceHolderTextField.m
-//  LimitTextInputDemo
+//  LTLimitTextField.m
+//  LimitTextInput
 //
-//  Created by guolin     song on 2016/12/12.
-//  Copyright © 2016年 Marke Jave. All rights reserved.
+//  Created by Marike Jave on 4/11/13.
+//  Copyright (c) 2014年 Marike Jave. All rights reserved.
 //
-
-#import "UIPlaceHolderTextField.h"
-
+#import "LTLimitTextField.h"
 #import "NSString+Addition.h"
 
-@interface UIPlaceHolderTextField()
+@interface LTLimitTextField()
 
 @property (nonatomic , strong) LTTextInputLimitManager *limitManager;
 
 @end
 
-@implementation UIPlaceHolderTextField
+@implementation LTLimitTextField
 
 - (void)awakeFromNib{
     [super awakeFromNib];
@@ -42,24 +40,7 @@
     }
     return self;
 }
--(void)setShowTitle:(BOOL)showTitle
-{
-    _showTitle=showTitle;
-    if (self.showTitle) {
-       
-        self.clipsToBounds=NO;
-        self.titleLabel=[[UILabel alloc] initWithFrame:CGRectMake(0, -10, [UIScreen mainScreen].bounds.size.width-20, 15)];
-       
-        _titleLabel.font=[UIFont boldSystemFontOfSize:12.f];
-        _titleLabel.text=self.placeholder;
-        _titleLabel.textColor=[UIColor colorWithWhite:0.6 alpha:1];
-        [self addSubview:_titleLabel];
 
-        _titleLabel.hidden=YES;
-        
-    }
-    
-}
 - (void)setDelegate:(id<UITextFieldDelegate>)delegate{
     
     if (![super delegate] ||
@@ -86,43 +67,29 @@
     return _limitManager;
 }
 
-- (void)config
-{
+- (void)setText:(NSString *)text{
+    [super setText:text];
     
-    [self addTarget:self action:@selector(TFLimitLength:) forControlEvents:UIControlEventEditingChanged];
-    
-    self.textLimitType = LTTextLimitTypeLength;
-    if (self.textLimitSize==0) {
-        [self setTextLimitSize:NSIntegerMax];
-    }
+    [self setCorrect:[LTTextInputLimitManager contentAllowTextInput:self text:text]];
+}
 
-
+- (void)setTextLimitType:(LTTextLimitType)textLimitType{
+    _textLimitType = textLimitType;
     
+    [self config];
+}
+
+- (void)config;{
+    
+    [self setTextLimitSize:NSIntegerMax];
     
     if (![super delegate] ||
         ([super delegate] && [super delegate] != [self limitManager])) {
         
         [super setDelegate:[self limitManager]];
     }
-   
 }
--(void)TFLimitLength:(UIPlaceHolderTextField *)textField
-{
-    
-    if (textField.text.length>0) {
-         _titleLabel.text=self.placeholder;
-        _titleLabel.hidden=NO;
-    }
-    else
-    {
-        _titleLabel.hidden=YES;
-       
-    }
-    
-    if ([self.delegateEx respondsToSelector:@selector(UIPlaceHolderTextFieldDidChange:)]) {
-        return [self.delegateEx UIPlaceHolderTextFieldDidChange:textField];
-    }
-}
+
 - (void)unmarkText;{
     
     
@@ -171,49 +138,4 @@
     }
 }
 
-#pragma mark setter
--(void)setTEXT:(NSString *)TEXT
-{
-    _TEXT=TEXT;
-    self.text=TEXT;
-    if (TEXT.length>0) {
-        _titleLabel.hidden=NO;
-    }
-    else
-    {
-        _titleLabel.hidden=YES;
-    }
-}
--(void)setInputType:(NSInteger)inputType
-{
-    _inputType=inputType;
-
-    self.textLimitInputType=inputType;
-
-    
-}
-
--(void)setTextLimitSize:(NSInteger)textLimitSize
-{
-    _textLimitSize=textLimitSize;
-
-}
-- (void)setText:(NSString *)text{
-    [super setText:text];
-    
-    [self setCorrect:[LTTextInputLimitManager contentAllowTextInput:self text:text]];
-}
-
-- (void)setTextLimitType:(LTTextLimitType)textLimitType{
-    
-    _textLimitType = textLimitType;
-
-}
--(void)setTextLimitInputType:(LTTextLimitInputType)textLimitInputType
-{
-    
-    _textLimitInputType=textLimitInputType;
-    
-    
-}
 @end

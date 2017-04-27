@@ -8,8 +8,11 @@
 
 #import "TextFiledForm.h"
 #import "UIPlaceHolderTextField.h"
+#import "Masonry.h"
 @interface TextFiledForm ()<UITextFieldDelegate>
 @property (strong, nonatomic)  UIPlaceHolderTextField *textField;
+
+@property (nonatomic,copy) NSString *currentString;
 
 @end
 @implementation TextFiledForm
@@ -23,8 +26,15 @@
 {
     if (self=[super init]) {
         self.textField=[UIPlaceHolderTextField new];
+
+//            self.textField.frame=CGRectMake(10, 20, self.superview.bounds.size.width-20, self.bounds.size.height-20);
         [self addSubview:self.textField];
         
+
+        [self.textField mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.right.bottom.equalTo(self);
+            make.top.equalTo(self).mas_offset(20);
+        }];
     }
     
     return self;
@@ -32,8 +42,9 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
+
     
-    self.textField.frame=CGRectMake(10, 0, self.bounds.size.width-15, self.bounds.size.height);
+
 }
 -(void)awakeFromNib
 {
@@ -44,8 +55,10 @@
 {
     
     [super setupWithModel:model];
+  
     self.textField.text=model.content;
     self.textField.placeholder=model.placeholder;
+    self.textField.showTitle=model.showTitle;
     
     [self configTFWithModel:model];
     
@@ -88,32 +101,107 @@
 }
 - (void)formatDate {
 
-    
-    NSString *currentString = self.textField.text;
-    NSString *strippedValue = [currentString stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, currentString.length)];
-    
-    // Date formatting will follow the format MM/DD/YYYY
-    NSString *formattedString;
-    if (strippedValue.length == 0) {
-        formattedString = @"";
+    //说明是删除
+    if (self.currentString.length>self.textField.text.length) {
+        self.currentString = self.textField.text;
+        
+        //判断 第6位字符，大于1
+        if (self.currentString.length == 6) {
+            
+            NSString *strippedValue = [self.currentString stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, self.currentString.length)];
+            NSString * month=[strippedValue substringWithRange:NSMakeRange(4, 1)];
+            if ([month integerValue]==0) {
+                NSString * year=[strippedValue substringToIndex:4];
+                self.textField.text=year;
+                self.currentString = self.textField.text;
+            }
+        }
+        
+        
     }
-    else if (strippedValue.length < 2) {
-        formattedString = strippedValue;
+    else
+    {
+        self.currentString = self.textField.text;
+        NSString *strippedValue = [self.currentString stringByReplacingOccurrencesOfString:@"[^0-9]" withString:@"" options:NSRegularExpressionSearch range:NSMakeRange(0, self.currentString.length)];
+        
+        // Date formatting will follow the format MM/DD/YYYY
+        NSString *formattedString;
+
+        //判断 第5位字符，大于1
+        if (strippedValue.length == 5) {
+            NSString * month=[strippedValue substringWithRange:NSMakeRange(4, 1)];
+            if ([month integerValue]>1) {
+                month=[NSString stringWithFormat:@"0%@",month];
+                strippedValue=[NSString stringWithFormat:@"%@%@",[strippedValue substringToIndex:4],month];
+                
+            }
+
+  
+        }
+        //判断 第6位字符，大于2
+        if (strippedValue.length == 6) {
+            NSString * month=[strippedValue substringWithRange:NSMakeRange(4, 1)];
+            if ([month integerValue]==1)
+            {
+                NSString * month1=[strippedValue substringWithRange:NSMakeRange(5, 1)];
+                if ([month1 integerValue]>2) {
+                    strippedValue=[strippedValue substringToIndex:5];
+                }
+            }
+            
+        }
+        
+        //判断 第7位字符，大于3
+
+        if (strippedValue.length == 8) {
+            NSString * day=[strippedValue substringWithRange:NSMakeRange(6, 1)];
+            if ([day integerValue]==3)
+            {
+                NSString * month1=[strippedValue substringWithRange:NSMakeRange(7, 1)];
+                if ([month1 integerValue]>1) {
+                    strippedValue=[strippedValue substringToIndex:7];
+                }
+            }
+            if ([day integerValue]>3)
+            {
+                strippedValue=[strippedValue substringToIndex:7];
+            }
+            
+        }
+
+        
+        
+        
+        
+        
+        
+        if (strippedValue.length == 0) {
+            formattedString = @"";
+        }
+        else if (strippedValue.length < 4) {
+            formattedString = strippedValue;
+        }
+        else if (strippedValue.length == 4) {
+            formattedString = [NSString stringWithFormat:@"%@-", strippedValue];
+        }
+        else if (strippedValue.length <= 6) {
+            formattedString = [NSString stringWithFormat:@"%@-%@", [strippedValue substringToIndex:4], [strippedValue substringFromIndex:4]] ;
+        }
+        else if (strippedValue.length <= 8) {
+            NSString * year=[strippedValue substringToIndex:4];
+            NSString * month=[strippedValue substringWithRange:NSMakeRange(4, 2)];
+            NSString * day=[strippedValue substringFromIndex:6];
+            
+            formattedString = [NSString stringWithFormat:@"%@-%@-%@", year, month, day] ;
+        }
+        else {
+            formattedString = [self.currentString substringToIndex:10];
+        }
+ 
+        self.textField.TEXT = formattedString;
+        self.currentString = self.textField.text;
     }
-    else if (strippedValue.length == 2) {
-        formattedString = [NSString stringWithFormat:@"%@-", strippedValue];
-    }
-    else if (strippedValue.length <= 4) {
-        formattedString = [NSString stringWithFormat:@"%@-%@", [strippedValue substringToIndex:2], [strippedValue substringFromIndex:2]] ;
-    }
-    else if (strippedValue.length <= 8) {
-        formattedString = [NSString stringWithFormat:@"%@-%@-%@", [strippedValue substringToIndex:2], [strippedValue substringWithRange:NSMakeRange(2, 2)], [strippedValue substringFromIndex:4]] ;
-    }
-    else {
-        formattedString = currentString;
-    }
-    
-    self.textField.text = formattedString;
+   
 }
 
 @end

@@ -22,6 +22,7 @@ Pod::Spec.new do |s|
 
 
 # s.dependency "YYWebImage", "~> 1.0.5"
+  s.dependency "Masonry"
 
 
 end

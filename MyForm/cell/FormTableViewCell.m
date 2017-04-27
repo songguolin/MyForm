@@ -10,7 +10,7 @@
 
 #import "TextViewForm.h"
 #import "TextFiledForm.h"
-
+#import "Masonry.h"
 @interface FormTableViewCell ()
 {
     FormBaseView *_formView;
@@ -26,21 +26,27 @@
 //cell的标示
 + (NSString *)cellIdentifierForMessageModel:(FormModel *)model
 {
-    NSString * identifireCell=@"identifireCell";
+
     switch (model.formCellViewType) {
         case FormCellViewType_Default:
         {
-            return [identifireCell stringByAppendingString:@"_Default"];
+
+            static NSString * identifireCell=@"identifireCell_Default";
+            return identifireCell;
         }
             break;
         case FormCellViewType_TF:
         {
-            return [identifireCell stringByAppendingString:@"_TF"];
+            
+            static NSString * identifireCell=@"identifireCell_Default";
+            return identifireCell;
         }
             break;
         case FormCellViewType_TV:
         {
-            return [identifireCell stringByAppendingString:@"_TV"];
+           
+            static NSString * identifireCell=@"identifireCell_Default";
+            return identifireCell;
         }
             break;
             
@@ -48,19 +54,22 @@
             break;
     }
     
-     return identifireCell;
+    static NSString * identifireCell=@"identifireCell";
+    return identifireCell;
 }
 //第一次创建，没有cell
 - (id)initWithFormModel:(FormModel *)model reuseIdentifier:(NSString *)reuseIdentifier indexPath:(NSIndexPath *)indexpath tableView:(UITableView *)tableView
 {
     if (self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuseIdentifier]) {
-        [self setupSubViewsForModel:model withIndexPath:indexpath andTableView:tableView];
+        
+         [self setupSubViewsForModel:model withIndexPath:indexpath andTableView:tableView];
+       
     }
     return self;
 }
 
 //设置视图
-- (void)setupSubViewsForModel:(FormModel *)model withIndexPath:(NSIndexPath *)indexpath andTableView:(UITableView *)tableView;
+- (void)setupSubViewsForModel:(FormModel *)model withIndexPath:(NSIndexPath *)indexpath andTableView:(UITableView *)tableView
 {
     self.expandableTableView=tableView;
     self.formModel=model;
@@ -84,11 +93,12 @@
     _formView=[self formViewForMessageModel:model];
     [_formView setupWithModel:model];
     
-    _formView.autoresizingMask=UIViewAutoresizingFlexibleHeight;
-    _formView.frame=self.contentView.bounds;
     [self.contentView addSubview:_formView];
-
+    [_formView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.and.top.and.right.bottom.equalTo(self.contentView);
+    }];
 }
+//根据模型创建不同的内容控件
 - (FormBaseView *)formViewForMessageModel:(FormModel *)model
 {
     switch (model.formCellViewType) {
@@ -128,9 +138,13 @@
   
 }
 
+#pragma mark 负责内容的
 -(void)setupWithModel:(FormModel *)model
 {
     self.formModel=model;
+    
+    //这个是每次滑动都会调用，避免cell重用
+    [_formView setupWithModel:model];
 }
 -(void)updateFormCellHeight:(CGFloat)newHeight
 {

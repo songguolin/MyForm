@@ -48,8 +48,11 @@ typedef NS_ENUM(NSUInteger,FormCellViewType) {
 
 //可选的的设置
 @property (nonatomic,assign) FormTextFieldType formTextFieldType;
-@property (nonatomic,copy) NSString * content;
+
+//默认字
 @property (nonatomic,copy) NSString * placeholder;
-
-
+//是否显示标题-即输入内容后，placeholder在内容上方显示
+@property (nonatomic,assign) BOOL showTitle;
+//内容
+@property (nonatomic,copy) NSString * content;
 @end
