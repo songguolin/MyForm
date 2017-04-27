@@ -4,7 +4,7 @@
 [![Platform](https://img.shields.io/cocoapods/p/MYForm.svg?style=flat)](http://cocoadocs.org/docsets/MYForm)
 ![Language](https://img.shields.io/badge/Language-%20Objective%20C%20-blue.svg)
 ### 应用截图
-![image](https://github.com/songguolin/RichTextView/blob/master/009657ED-2A93-469D-A3D9-FC1706E40143.png)；
+![image](https://github.com/songguolin/MyForm/blob/master/009657ED-2A93-469D-A3D9-FC1706E40143.png)；
 ### 框架整体介绍
 * 该框架为一个能够快速构建信息表单的一款工具。
 
