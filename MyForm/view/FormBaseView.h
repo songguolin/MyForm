@@ -9,7 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "FormModel.h"
 @interface FormBaseView : UIView
-
+    
+    
+//    默认提示
+@property (nonatomic,strong) UILabel * placeholderLabel;
 @property (nonatomic,strong) FormModel * model;
 -(void)setupWithModel:(FormModel*)model;
 @end

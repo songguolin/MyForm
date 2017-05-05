@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
 
 
   s.name         = "MyForm"
-  s.version      = "0.0.3"
+  s.version      = "1.0.0"
   s.summary      = "An easy way to table"
   s.homepage     = "https://github.com/songguolin/MyForm"
   s.license      = "MIT"

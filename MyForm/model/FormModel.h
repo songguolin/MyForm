@@ -54,5 +54,5 @@ typedef NS_ENUM(NSUInteger,FormCellViewType) {
 //是否显示标题-即输入内容后，placeholder在内容上方显示
 @property (nonatomic,assign) BOOL showTitle;
 //内容
-@property (nonatomic,copy) NSString * content;
+@property (nonatomic,strong) NSString * content;
 @end

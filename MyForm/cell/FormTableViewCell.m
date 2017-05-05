@@ -38,14 +38,14 @@
         case FormCellViewType_TF:
         {
             
-            static NSString * identifireCell=@"identifireCell_Default";
+            static NSString * identifireCell=@"identifireCell_TF";
             return identifireCell;
         }
             break;
         case FormCellViewType_TV:
         {
            
-            static NSString * identifireCell=@"identifireCell_Default";
+            static NSString * identifireCell=@"identifireCell_TV";
             return identifireCell;
         }
             break;
@@ -91,6 +91,7 @@
     
     
     _formView=[self formViewForMessageModel:model];
+  
     [_formView setupWithModel:model];
     
     [self.contentView addSubview:_formView];
@@ -152,16 +153,21 @@
         
         id<FormTableViewDelegate> delegate = (id<FormTableViewDelegate>)self.expandableTableView.delegate;
         NSIndexPath *indexPath = [self.expandableTableView indexPathForCell:self];
+        if (indexPath!=nil) {
+            
+            //调用代理方法，刷新高度
+            CGFloat oldHeight = [delegate tableView:self.expandableTableView heightForRowAtIndexPath:indexPath];
+            if (fabs(newHeight - oldHeight) > 0.01) {
+                //重新赋值新高度
+                self.formModel.cellHeight=newHeight;
+                // refresh the table without closing the keyboard
+                [self.expandableTableView beginUpdates];
+                [self.expandableTableView endUpdates];
+                
+            }
+        }
         
        
-        CGFloat oldHeight = [delegate tableView:self.expandableTableView heightForRowAtIndexPath:indexPath];
-        if (fabs(newHeight - oldHeight) > 0.01) {
-            self.formModel.cellHeight=newHeight;
-            
-            // refresh the table without closing the keyboard
-            [self.expandableTableView beginUpdates];
-            [self.expandableTableView endUpdates];
-        }
     }
 
 }

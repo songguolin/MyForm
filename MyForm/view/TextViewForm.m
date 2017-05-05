@@ -7,49 +7,46 @@
 //
 
 #import "TextViewForm.h"
-#import "UIPlaceHolderTextView1.h"
+#import "LTPlaceholderTextView.h"
 #import "Masonry.h"
 @interface TextViewForm ()<UITextViewDelegate>
-@property (nonatomic,strong) UIPlaceHolderTextView1 * textView;
+@property (nonatomic,strong) LTPlaceholderTextView * textView;
 @property (nonatomic,assign) CGFloat newheight;
+
 @end
 @implementation TextViewForm
 
 +(instancetype)creat
 {
-
-    
     TextViewForm * view=[[TextViewForm alloc] init];
-    
     return view;
 }
 -(id)init
 {
     if (self=[super init]) {
-        _textView = [[UIPlaceHolderTextView1 alloc] init];
+        _textView = [[LTPlaceholderTextView alloc] init];
         _textView.delegate = self;
-        _textView.backgroundColor=[UIColor whiteColor];
-        
-        _textView.autoresizingMask = UIViewAutoresizingFlexibleHeight;
+
+
         _textView.backgroundColor = [UIColor clearColor];
-        _textView.font = [UIFont systemFontOfSize:18.0f];
+        _textView.font = [UIFont systemFontOfSize:14.0f];
         
         _textView.scrollEnabled = NO;
         _textView.showsVerticalScrollIndicator = NO;
         _textView.showsHorizontalScrollIndicator = NO;
 
 
-//        CGRect cellFrame = CGRectMake(10, 20, [UIScreen mainScreen].bounds.size.width-20, 40);
-//        
-//        _textView.frame=cellFrame;
 
         [self addSubview:self.textView];
         
-        [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.bottom.equalTo(self);
-            make.top.equalTo(self).mas_offset(20);
-        }];
         
+        [self.textView mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.bottom.equalTo(self);
+            make.left.equalTo(self).mas_offset(10);
+            make.right.equalTo(self).mas_offset(-10);
+            make.top.equalTo(self).mas_equalTo(20);
+//            make.height.mas_equalTo(40);
+        }];
 
         
     }
@@ -58,7 +55,7 @@
 -(void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
   
 }
 
@@ -66,9 +63,9 @@
 {
     
     [super setupWithModel:model];
-
-
-
+ 
+    
+ 
     if (model.content!=nil) {
         self.textView.text=model.content;
         [self updateHeight];
@@ -77,11 +74,15 @@
         self.textView.placeholder=model.placeholder;
     }
     
+    
+    
 }
 
 #pragma mark UITextViewDelegate
 - (void)textViewDidChange:(UITextView *)textView
 {
+    self.placeholderLabel.hidden=textView.text.length>0?NO:YES;
+    self.model.content=textView.text;
     [self updateHeight];
 }
 
@@ -92,15 +93,19 @@
     CGFloat  height= [self.textView sizeThatFits:CGSizeMake(self.textView.frame.size.width, FLT_MAX)].height;
     
     self.newheight=height+20;
-   
+
+    //这样写 cell会跳动
+//    [self.textView mas_updateConstraints:^(MASConstraintMaker *make) {
+//        make.height.mas_equalTo(height);
+//    }];
+    
+
+    self.textView.frame=CGRectMake(10, 20, self.bounds.size.width-20, height);
     
     if (self.heightBlock) {
         self.heightBlock(self.newheight);
     }
-
     
-    
- 
 }
 
 

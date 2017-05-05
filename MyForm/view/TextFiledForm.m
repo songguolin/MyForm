@@ -9,7 +9,7 @@
 #import "TextFiledForm.h"
 #import "UIPlaceHolderTextField.h"
 #import "Masonry.h"
-@interface TextFiledForm ()<UITextFieldDelegate>
+@interface TextFiledForm ()<UITextFieldDelegate,UIPlaceHolderTextFieldDelegate>
 @property (strong, nonatomic)  UIPlaceHolderTextField *textField;
 
 @property (nonatomic,copy) NSString *currentString;
@@ -27,12 +27,17 @@
     if (self=[super init]) {
         self.textField=[UIPlaceHolderTextField new];
 
-//            self.textField.frame=CGRectMake(10, 20, self.superview.bounds.size.width-20, self.bounds.size.height-20);
+        self.textField.font=[UIFont systemFontOfSize:14.f];
+
+        self.textField.delegateEx=self;
+        self.textField.delegate=self;
         [self addSubview:self.textField];
         
 
         [self.textField mas_makeConstraints:^(MASConstraintMaker *make) {
-            make.left.right.bottom.equalTo(self);
+            make.bottom.equalTo(self);
+            make.left.equalTo(self).mas_offset(10);
+            make.right.equalTo(self).mas_offset(-10);
             make.top.equalTo(self).mas_offset(20);
         }];
     }
@@ -43,7 +48,6 @@
 {
     [super layoutSubviews];
 
-    
 
 }
 -(void)awakeFromNib
@@ -58,17 +62,11 @@
   
     self.textField.text=model.content;
     self.textField.placeholder=model.placeholder;
-    self.textField.showTitle=model.showTitle;
-    
+ 
     [self configTFWithModel:model];
-    
-    
 }
 -(void)configTFWithModel:(FormModel*)model
 {
-    
-    
-
     if (model.formTextFieldType==FormTextFieldType_Date) {
         self.textField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         self.textField.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -93,11 +91,7 @@
     else {
         NSUInteger type=model.formTextFieldType;
         self.textField.textLimitInputType=type;
-        
-        
     }
-    
-    
 }
 - (void)formatDate {
 
@@ -116,8 +110,6 @@
                 self.currentString = self.textField.text;
             }
         }
-        
-        
     }
     else
     {
@@ -135,8 +127,6 @@
                 strippedValue=[NSString stringWithFormat:@"%@%@",[strippedValue substringToIndex:4],month];
                 
             }
-
-  
         }
         //判断 第6位字符，大于2
         if (strippedValue.length == 6) {
@@ -203,5 +193,16 @@
     }
    
 }
-
+    
+#pragma mark 
+- (void)UIPlaceHolderTextFieldDidChange:(UIPlaceHolderTextField *)textField
+{
+    self.placeholderLabel.hidden=textField.text.length>0?NO:YES;
+}
+    
+#pragma mark UITextFieldDelegate
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    self.model.content=textField.text;
+}
 @end
