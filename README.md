@@ -7,7 +7,7 @@
 ![image](https://github.com/songguolin/MyForm/blob/master/009657ED-2A93-469D-A3D9-FC1706E40143.jpeg)
 ### 框架整体介绍
 * 该框架为一个能够快速构建信息表单的一款工具。
-* 支持cocoapad，使用 pod 'MyForm'。
+* 支持cocoapod，使用 pod 'MyForm'。
 
 
 ### 框架支持与框架依赖
